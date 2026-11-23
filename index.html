@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>WebAssembly</title>
+</head>
+<body>
+  <h1>Hola mundo desde WebAssembly</h1>
+  <ul id="lista"></ul>
+  <p><small>La lista proviene de un módulo .wasm escrito en Rust.</small></p>
+  <script>
+    WebAssembly.instantiateStreaming(fetch("hola_wasm.wasm")).then(({ instance }) => {
+      const e = instance.exports;
+      const bytes = new Uint8Array(e.memory.buffer, e.cosas_ptr(), e.cosas_len());
+      const cosas = new TextDecoder("utf-8").decode(bytes).split(",");
+      document.getElementById("lista").innerHTML =
+        cosas.map(c => `<li>${c}</li>`).join("");
+    });
+  </script>
+</body>
+</html>
